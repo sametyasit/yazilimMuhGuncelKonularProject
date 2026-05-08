@@ -322,7 +322,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 182269414}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1930721564}
+        m_TargetAssemblyTypeName: BilgiKartSistemi, Assembly-CSharp
+        m_MethodName: OncekiKart
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &182269414
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -896,7 +908,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 354302471}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1930721564}
+        m_TargetAssemblyTypeName: BilgiKartSistemi, Assembly-CSharp
+        m_MethodName: SonrakiKart
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &354302471
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1206,6 +1230,7 @@ GameObject:
   - component: {fileID: 584261382}
   - component: {fileID: 584261384}
   - component: {fileID: 584261383}
+  - component: {fileID: 584261385}
   m_Layer: 5
   m_Name: Image
   m_TagString: Untagged
@@ -1270,6 +1295,22 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 584261381}
   m_CullTransparentMesh: 1
+--- !u!114 &584261385
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 584261381}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0797fa797b37b463297019774f8c95e7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BilgiKartSistemi
+  kartResmi: {fileID: 0}
+  kartMetni: {fileID: 0}
+  resimler: []
+  bilgiler: []
 --- !u!1 &659286820
 GameObject:
   m_ObjectHideFlags: 0
@@ -2599,6 +2640,7 @@ GameObject:
   - component: {fileID: 1930721561}
   - component: {fileID: 1930721563}
   - component: {fileID: 1930721562}
+  - component: {fileID: 1930721564}
   m_Layer: 5
   m_Name: Panel_Bilgi
   m_TagString: Untagged
@@ -2668,6 +2710,24 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1930721560}
   m_CullTransparentMesh: 1
+--- !u!114 &1930721564
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1930721560}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0797fa797b37b463297019774f8c95e7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BilgiKartSistemi
+  kartResmi: {fileID: 584261383}
+  kartMetni: {fileID: 1421633706}
+  resimler: []
+  bilgiler:
+  - "Haz\u0131rl\u0131k s\xFCreci"
+  - "Ameliyat g\xFCn\xFC"
 --- !u!1 &1949254755
 GameObject:
   m_ObjectHideFlags: 0
