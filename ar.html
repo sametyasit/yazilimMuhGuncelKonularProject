@@ -51,7 +51,6 @@
   <rect x="165" y="120" width="5" height="50" rx="2.5" fill="#6c63ff"/>
 </svg>
 
-<!-- Marker referans gorseli -->
 <div id="marker-ref">
   <p>Bu markeri yazdir</p>
   <img src="https://ar-js-org.github.io/AR.js/data/images/hiro.png" alt="Hiro Marker"/>
@@ -76,82 +75,231 @@
   vr-mode-ui="enabled:false"
   style="position:fixed;top:0;left:0;width:100%;height:100%;z-index:1;">
 
+  <a-assets>
+    <canvas id="arCanvas" width="1024" height="680"></canvas>
+  </a-assets>
+
   <a-marker preset="hiro" id="hiroMarker">
-
-    <!-- Dis glow cerceve -->
-    <a-plane position="0 0.005 0" rotation="-90 0 0" width="4.0" height="2.8" color="#6c63ff" opacity="0.22" material="side:double"></a-plane>
-
-    <!-- Ana kart zemini -->
-    <a-plane id="bg" position="0 0.01 0" rotation="-90 0 0" width="3.8" height="2.6" color="#050510" opacity="0.97" material="side:double"></a-plane>
-
-    <!-- Ust renkli baslik blogu (Z negatif = gorsel ust) -->
-    <a-plane id="hdr" position="0 0.02 -0.85" rotation="-90 0 0" width="3.8" height="0.7" color="#6c63ff" opacity="1" material="side:double"></a-plane>
-    <a-plane position="-1.7 0.03 -0.85" rotation="-90 0 0" width="0.12" height="0.7" color="#ffffff" opacity="0.3" material="side:double"></a-plane>
-    <a-text id="t-title"
-      value="ILAC KULLANIMI"
-      position="0 0.12 -0.85"
+    <a-plane id="cardPlane"
+      position="0 0.01 0"
       rotation="-90 0 0"
-      align="center" color="#ffffff"
-      width="3.4" font="roboto"
-      letter-spacing="2">
-    </a-text>
-
-    <!-- Ayrac cizgi -->
-    <a-plane position="0 0.015 -0.42" rotation="-90 0 0" width="3.4" height="0.03" color="#6c63ff" opacity="0.6" material="side:double"></a-plane>
-
-    <!-- Bilgi satirlari -->
-    <a-plane position="0 0.015 -0.22" rotation="-90 0 0" width="3.6" height="0.32" color="#0d0d2a" opacity="0.95" material="side:double"></a-plane>
-    <a-text id="t-l1" value="Immunsupresif ilaclarinizi her gun" position="0 0.12 -0.22" rotation="-90 0 0" align="center" color="#e2e8f0" width="3.3" font="roboto"></a-text>
-
-    <a-plane id="hl2" position="0 0.015 0.10" rotation="-90 0 0" width="3.6" height="0.32" color="#1a0a00" opacity="0.97" material="side:double"></a-plane>
-    <a-text id="t-l2" value="AYNI SAATTE ve AKSATMADAN alin." position="0 0.12 0.10" rotation="-90 0 0" align="center" color="#fbbf24" width="3.3" font="roboto"></a-text>
-
-    <a-plane position="0 0.015 0.42" rotation="-90 0 0" width="3.6" height="0.32" color="#0d0d2a" opacity="0.95" material="side:double"></a-plane>
-    <a-text id="t-l3" value="Takrolimus, Siklosporin, Mikofenolat:" position="0 0.12 0.42" rotation="-90 0 0" align="center" color="#94a3b8" width="3.3" font="roboto"></a-text>
-
-    <a-plane position="0 0.015 0.74" rotation="-90 0 0" width="3.6" height="0.32" color="#0d0d2a" opacity="0.95" material="side:double"></a-plane>
-    <a-text id="t-l4" value="Atlanan doz organ reddine yol acar!" position="0 0.12 0.74" rotation="-90 0 0" align="center" color="#c4b5fd" width="3.3" font="roboto"></a-text>
-
-    <!-- Alt durum banner (Z pozitif = gorsel alt) -->
-    <a-plane id="status-box" position="0 0.02 1.10" rotation="-90 0 0" width="3.8" height="0.46" color="#ef4444" opacity="1" material="side:double"></a-plane>
-    <a-plane position="-1.7 0.04 1.10" rotation="-90 0 0" width="0.18" height="0.46" color="#ffffff" opacity="0.25" material="side:double"></a-plane>
-    <a-text id="t-status" value="ONEM DERECESI: KRITIK" position="0 0.14 1.10" rotation="-90 0 0" align="center" color="#ffffff" width="3.4" font="roboto" letter-spacing="1"></a-text>
-
+      width="3.8" height="2.55"
+      material="src:#arCanvas; transparent:true; side:double;">
+    </a-plane>
   </a-marker>
+
   <a-entity camera></a-entity>
 </a-scene>
 
 <script>
-const cards=[
-  {title:'ILAC KULLANIMI',l1:'Immunsupresif ilaclarinizi her gun',l2:'AYNI SAATTE ve AKSATMADAN alin.',l3:'Takrolimus, Siklosporin, Mikofenolat:',l4:'Atlanan doz organ reddine yol acar!',status:'ONEM DERECESI: KRITIK',sc:'#ef4444',hc:'#6c63ff',l2c:'#fbbf24'},
-  {title:'BESLENME KURALLARI',l1:'Sebze, meyve, tam tahil, az yagly protein.',l2:'GREYFURT KESINLIKLE YASAK! (ilac etkilesimi)',l3:'Alkol, cig yumurta, pastorize edilmemis',l4:'sut urunleri tuketilmemeli.',status:'SAGLIKLI BESLENME ZORUNLU',sc:'#f59e0b',hc:'#f59e0b',l2c:'#f87171'},
-  {title:'RED BELIRTILERI',l1:'Ates 38C+, sararma, karyn agrisi,',l2:'siddetli yorgunluk ve idrar kararması.',l3:'Bu belirtiler organ reddinin isareti!',l4:'HEMEN doktorunuzu arayin!',status:'ACIL: 0850 255 9999',sc:'#ef4444',hc:'#dc2626',l2c:'#f87171'},
-  {title:'KESINLIKLE KACINILACAKLAR',l1:'ALKOL: Nakledilen karacigeri tahrip eder.',l2:'SIGARA: Bagisiklik sistemini cokertir.',l3:'GREYFURT, cig et ve pastorize edilmemis',l4:'urunler, izinsiz bitki cayi yasak.',status:'BU KURALLARI ASLA IHLAL ETME',sc:'#ef4444',hc:'#7f1d1d',l2c:'#fbbf24'},
-  {title:'EGZERSIZ VE YASAM',l1:'Doktor onayli hafif yuruyus yapabilirsin.',l2:'Gunluk 20-30 dk yuruyus idealdir.',l3:'Agir kaldirma ve yorucu spordan kacin.',l4:'Duzensiz uyku bagisiklik sistemini zorlar.',status:'AKTIF VE DUZENLI YAS',sc:'#22c55e',hc:'#10b981',l2c:'#6ee7b7'},
-  {title:'ACIL DURUMLAR',l1:'38C+ ates / ani sararma / nefes darligi',l2:'=> HEMEN 112 veya nakil merkezini ara!',l3:'Ameliyat bolgesinde sislik, kirmizilik,',l4:'ani kilo artisi 2kg+/2gun tehlike isareti.',status:'ACIL: 112 | 0850 255 9999',sc:'#ef4444',hc:'#7f1d1d',l2c:'#f87171'}
+const cards = [
+  {
+    title: 'ILAC KULLANIMI',
+    lines: [
+      {text: 'Immunsupresif ilaclarinizi her gun', color: '#e2e8f0'},
+      {text: 'AYNI SAATTE ve AKSATMADAN alin.', color: '#fbbf24'},
+      {text: 'Takrolimus - Siklosporin - Mikofenolat', color: '#94a3b8'},
+      {text: 'Atlanan doz organ reddine yol acar!', color: '#c4b5fd'},
+    ],
+    status: 'ONEM DERECESI: KRITIK',
+    headerColor: '#6c63ff',
+    statusColor: '#ef4444',
+  },
+  {
+    title: 'BESLENME KURALLARI',
+    lines: [
+      {text: 'Sebze, meyve, tam tahil, az yagly protein.', color: '#e2e8f0'},
+      {text: 'GREYFURT KESINLIKLE YASAK!', color: '#f87171'},
+      {text: 'Alkol ve cig et kesinlikle tuketme.', color: '#94a3b8'},
+      {text: 'Pastorize edilmemis sut urunleri yasak.', color: '#fbbf24'},
+    ],
+    status: 'SAGLIKLI BESLENME ZORUNLU',
+    headerColor: '#f59e0b',
+    statusColor: '#d97706',
+  },
+  {
+    title: 'RED BELIRTILERI',
+    lines: [
+      {text: 'Ates 38C+, sararma, karin agrisi,', color: '#e2e8f0'},
+      {text: 'siddetli yorgunluk, idrar kararması.', color: '#f87171'},
+      {text: 'Bu belirtiler organ reddinin isareti!', color: '#94a3b8'},
+      {text: 'HEMEN doktorunuzu arayin!', color: '#f87171'},
+    ],
+    status: 'ACIL: 0850 255 9999',
+    headerColor: '#dc2626',
+    statusColor: '#ef4444',
+  },
+  {
+    title: 'KESINLIKLE KACINILACAKLAR',
+    lines: [
+      {text: 'ALKOL: Nakledilen karacigeri tahrip eder.', color: '#f87171'},
+      {text: 'SIGARA: Bagisiklik sistemini cokertir.', color: '#fbbf24'},
+      {text: 'GREYFURT ve cig et kesinlikle yasak.', color: '#94a3b8'},
+      {text: 'Izinsiz bitki cayi ve takviye kullanma.', color: '#e2e8f0'},
+    ],
+    status: 'BU KURALLARI ASLA IHLAL ETME',
+    headerColor: '#991b1b',
+    statusColor: '#ef4444',
+  },
+  {
+    title: 'EGZERSIZ VE YASAM',
+    lines: [
+      {text: 'Doktor onayli hafif yuruyus yapabilirsin.', color: '#e2e8f0'},
+      {text: 'Gunluk 20-30 dk yuruyus idealdir.', color: '#6ee7b7'},
+      {text: 'Agir kaldirma ve yorucu spordan kacin.', color: '#94a3b8'},
+      {text: 'Duzensiz uyku bagisiklik sistemini zorlar.', color: '#fbbf24'},
+    ],
+    status: 'AKTIF VE DUZENLI YAS',
+    headerColor: '#059669',
+    statusColor: '#22c55e',
+  },
+  {
+    title: 'ACIL DURUMLAR',
+    lines: [
+      {text: '38C+ ates / ani sararma / nefes darligi', color: '#f87171'},
+      {text: '=> HEMEN 112 veya nakil merkezini ara!', color: '#fbbf24'},
+      {text: 'Ameliyat bolgesinde sislik ve kirmizilik,', color: '#94a3b8'},
+      {text: 'Ani kilo artisi 2kg+/2gun tehlike isareti.', color: '#e2e8f0'},
+    ],
+    status: 'ACIL: 112  |  0850 255 9999',
+    headerColor: '#991b1b',
+    statusColor: '#ef4444',
+  },
 ];
-function setCard(idx){
-  document.querySelectorAll('.cbt').forEach((b,i)=>b.classList.toggle('active',i===idx));
-  const c=cards[idx];
-  document.getElementById('t-title').setAttribute('value',c.title);
-  document.getElementById('t-l1').setAttribute('value',c.l1);
-  document.getElementById('t-l2').setAttribute('value',c.l2);
-  document.getElementById('t-l2').setAttribute('color',c.l2c);
-  document.getElementById('t-l3').setAttribute('value',c.l3);
-  document.getElementById('t-l4').setAttribute('value',c.l4);
-  document.getElementById('t-status').setAttribute('value',c.status);
-  document.getElementById('status-box').setAttribute('color',c.sc);
-  document.getElementById('hdr').setAttribute('color',c.hc);
+
+const W = 1024, H = 680;
+const canvas = document.getElementById('arCanvas');
+const ctx = canvas.getContext('2d');
+
+function roundRect(c, x, y, w, h, r) {
+  c.beginPath();
+  c.moveTo(x+r,y); c.lineTo(x+w-r,y);
+  c.quadraticCurveTo(x+w,y,x+w,y+r);
+  c.lineTo(x+w,y+h-r); c.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+  c.lineTo(x+r,y+h); c.quadraticCurveTo(x,y+h,x,y+h-r);
+  c.lineTo(x,y+r); c.quadraticCurveTo(x,y,x+r,y);
+  c.closePath();
 }
-const marker=document.getElementById('hiroMarker');
-const badge=document.getElementById('found-badge');
-const hint=document.getElementById('hint-text');
-marker.addEventListener('markerFound',()=>{
-  badge.style.display='block';hint.style.display='none';
-  if(navigator.vibrate)navigator.vibrate([60,30,60]);
-  setTimeout(()=>{badge.style.display='none';},2200);
+
+function drawCard(card) {
+  ctx.clearRect(0, 0, W, H);
+
+  // Arkaplan
+  roundRect(ctx, 0, 0, W, H, 24);
+  ctx.fillStyle = '#07071a';
+  ctx.fill();
+
+  // Kenar cerceve
+  roundRect(ctx, 3, 3, W-6, H-6, 22);
+  ctx.strokeStyle = card.headerColor;
+  ctx.lineWidth = 5;
+  ctx.globalAlpha = 0.8;
+  ctx.stroke();
+  ctx.globalAlpha = 1;
+
+  // Header gradient
+  const hg = ctx.createLinearGradient(0, 0, W, 130);
+  hg.addColorStop(0, card.headerColor);
+  hg.addColorStop(1, card.headerColor + 'bb');
+  ctx.fillStyle = hg;
+  roundRect(ctx, 0, 0, W, 130, 24);
+  ctx.fill();
+  ctx.fillRect(0, 100, W, 30);
+
+  // Header sol accent
+  ctx.fillStyle = 'rgba(255,255,255,0.22)';
+  ctx.fillRect(0, 0, 14, 130);
+
+  // Baslik
+  ctx.fillStyle = '#ffffff';
+  ctx.font = 'bold 56px Arial, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(card.title, W/2, 67);
+
+  // Ayrac
+  ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+  ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(30,140); ctx.lineTo(W-30,140); ctx.stroke();
+
+  // Satirlar
+  const lineH = 104;
+  const startY = 152;
+  card.lines.forEach((line, i) => {
+    const y = startY + i * lineH;
+    // Satir arka
+    roundRect(ctx, 18, y, W-36, lineH-10, 10);
+    ctx.fillStyle = i%2===0 ? 'rgba(255,255,255,0.045)' : 'rgba(0,0,0,0.22)';
+    ctx.fill();
+    // Sol renk bar
+    ctx.fillStyle = line.color;
+    ctx.globalAlpha = 0.9;
+    ctx.fillRect(18, y, 7, lineH-10);
+    ctx.globalAlpha = 1;
+    // Metin
+    ctx.fillStyle = line.color;
+    ctx.font = '500 38px Arial, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(line.text, W/2+4, y + (lineH-10)/2);
+  });
+
+  // Status banner
+  const sbY = H - 82;
+  ctx.fillStyle = card.statusColor;
+  ctx.fillRect(0, sbY, W, 82);
+  ctx.strokeStyle = 'rgba(255,255,255,0.18)';
+  ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(0,sbY); ctx.lineTo(W,sbY); ctx.stroke();
+  ctx.fillStyle = 'rgba(255,255,255,0.18)';
+  ctx.fillRect(0, sbY, 14, 82);
+  ctx.fillStyle = '#ffffff';
+  ctx.font = 'bold 40px Arial, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(card.status, W/2, sbY + 41);
+
+  // Three.js texture guncelle
+  const plane = document.getElementById('cardPlane');
+  if (plane) {
+    const mesh = plane.getObject3D('mesh');
+    if (mesh && mesh.material && mesh.material.map) {
+      mesh.material.map.needsUpdate = true;
+    }
+  }
+}
+
+let currentIdx = 0;
+function setCard(idx) {
+  currentIdx = idx;
+  document.querySelectorAll('.cbt').forEach((b,i) => b.classList.toggle('active', i===idx));
+  drawCard(cards[idx]);
+}
+
+document.querySelector('a-scene').addEventListener('loaded', () => {
+  drawCard(cards[0]);
+  setInterval(() => {
+    const plane = document.getElementById('cardPlane');
+    if (plane) {
+      const mesh = plane.getObject3D('mesh');
+      if (mesh && mesh.material && mesh.material.map) {
+        mesh.material.map.needsUpdate = true;
+      }
+    }
+  }, 200);
 });
-marker.addEventListener('markerLost',()=>{hint.style.display='block';});
+
+const marker = document.getElementById('hiroMarker');
+const badge  = document.getElementById('found-badge');
+const hint   = document.getElementById('hint-text');
+marker.addEventListener('markerFound', () => {
+  badge.style.display = 'block';
+  hint.style.display  = 'none';
+  if(navigator.vibrate) navigator.vibrate([60,30,60]);
+  setTimeout(() => { badge.style.display='none'; }, 2200);
+  drawCard(cards[currentIdx]);
+});
+marker.addEventListener('markerLost', () => { hint.style.display='block'; });
 </script>
 </body>
 </html>
