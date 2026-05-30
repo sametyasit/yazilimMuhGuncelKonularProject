@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="tr" data-theme="light">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"/>
+  <meta name="theme-color" content="#6c63ff"/>
+  <link rel="manifest" href="manifest.json"/>
+  <meta name="mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+  <meta name="apple-mobile-web-app-title" content="LiveCare AR"/>
+  <title>Karaciğer Nakli – Hasta Eğitim AR</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+<canvas id="confettiCanvas"></canvas>
+<video id="cameraFeed" autoplay playsinline muted></video>
+
+<!-- SPLASH -->
+<div id="splashScreen">
+  <div class="splash-content">
+    <div class="splash-orb"></div>
+    <div class="splash-icon"></div>
+    <h1 class="splash-title">Karaciğer Nakli</h1>
+    <p class="splash-sub">Hasta Eğitim Sistemi</p>
+    <div class="splash-bar"><div class="splash-fill" id="splashFill"></div></div>
+    <p class="splash-loading" id="splashLoading">Yükleniyor…</p>
+  </div>
+</div>
+
+<!-- ANA EKRAN -->
+<div id="mainScreen" class="hidden">
+  <div class="top-bar">
+    <span class="app-badge"> LiveCare AR</span>
+    <button class="icon-btn" id="darkBtn" onclick="toggleDark()"></button>
+  </div>
+
+  <div class="motive-strip" id="motiveStrip"></div>
+
+  <div class="progress-row">
+    <span class="progress-label">Bugünkü tamamlama</span>
+    <div class="progress-track"><div class="progress-fill" id="mainProgressFill"></div></div>
+    <span class="progress-pct" id="mainProgressPct">0%</span>
+  </div>
+
+  <div class="btn-grid">
+    <button class="main-btn btn-blue"   onclick="openInfo()">
+      <div class="btn-glow"></div>
+      <span class="main-btn-icon"></span>
+      <span class="main-btn-label">Bilgilendirme</span>
+      <span class="main-btn-sub">10 kart</span>
+    </button>
+    <button class="main-btn btn-orange" onclick="openGame()">
+      <div class="btn-glow"></div>
+      <span class="main-btn-icon"></span>
+      <span class="main-btn-label">Yiyecek<br>Oyunu</span>
+      <span class="main-btn-sub">15 soru</span>
+    </button>
+    <button class="main-btn btn-purple" onclick="openReminder()">
+      <div class="btn-glow"></div>
+      <span class="main-btn-icon"></span>
+      <span class="main-btn-label">Hatırlatıcı<br>Kartlar</span>
+      <span class="main-btn-sub" id="reminderSubLabel">11 görev</span>
+      <span class="notif-dot hidden" id="notifDot"></span>
+    </button>
+    <button class="main-btn btn-red"    onclick="openEmergency()">
+      <div class="btn-glow"></div>
+      <span class="main-btn-icon"></span>
+      <span class="main-btn-label">Acil Durum</span>
+      <span class="main-btn-sub">Belirtiler</span>
+    </button>
+    <button class="main-btn btn-green" onclick="openAI()" style="grid-column:1/-1;">
+      <div class="btn-glow"></div>
+      <span class="main-btn-icon"></span>
+      <span class="main-btn-label">AI Kahvalti Analizi</span>
+      <span class="main-btn-sub">Kahvaltini kameraya goster</span>
+    </button>
+  </div>
+
+  <div class="drug-widget" onclick="openDrug()">
+    <span class="drug-widget-icon"></span>
+    <div class="drug-widget-text">
+      <strong>Sonraki İlaç Saati</strong>
+      <span id="nextDrugTime">Ayarlanmadı — Ayarlamak için dokun</span>
+    </div>
+    <span class="drug-arrow">›</span>
+  </div>
+</div>
+
+<!-- 1. BİLGİLENDİRME -->
+<div id="infoPanel" class="panel hidden">
+  <div class="panel-inner">
+    <div class="panel-handle"></div>
+    <h2 class="panel-title"> Bilgilendirme</h2>
+    <div class="info-progress-bar">
+      <div class="info-progress-fill" id="infoProgressFill"></div>
+    </div>
+    <p class="info-progress-text"><span id="infoIndex">1</span> / <span id="infoTotal">10</span></p>
+    <div class="info-card" id="infoCard">
+      <div class="info-card-icon" id="infoCardIcon"></div>
+      <p id="infoCardText"></p>
+      <div class="info-category" id="infoCategory"></div>
+    </div>
+    <div class="panel-actions">
+      <button class="btn-secondary" onclick="prevInfo()">◀ Önceki</button>
+      <button class="btn-primary"   onclick="nextInfo()">Sonraki ▶</button>
+    </div>
+    <button class="btn-close" onclick="closePanel('infoPanel')"> Kapat</button>
+  </div>
+</div>
+
+<!-- 2. OYUN -->
+<div id="gamePanel" class="panel hidden">
+  <div class="panel-inner">
+    <div class="panel-handle"></div>
+    <h2 class="panel-title"> Yiyecek / İçecek Oyunu</h2>
+    <div class="game-meta-row">
+      <div class="game-meta-box green"><span class="meta-num" id="gameScore">0</span><span class="meta-lbl">Doğru</span></div>
+      <div class="game-meta-box red">  <span class="meta-num" id="gameWrong">0</span><span class="meta-lbl">Yanlış</span></div>
+      <div class="game-meta-box blue"> <span class="meta-num" id="gameLeft">15</span><span class="meta-lbl">Kalan</span></div>
+    </div>
+    <div class="food-card" id="foodCard">
+      <div class="food-emoji" id="foodEmoji"></div>
+      <div class="food-name"  id="foodName"></div>
+      <p class="food-hint">Karaciğer nakli sonrası uygun mu?</p>
+    </div>
+    <div id="gameFeedback" class="feedback hidden"></div>
+    <div class="game-buttons" id="gameButtons">
+      <button class="btn-correct" onclick="answerGame(true)"> Uygun</button>
+      <button class="btn-wrong"   onclick="answerGame(false)"> Uygun Değil</button>
+    </div>
+    <button class="btn-next-q hidden" id="nextQBtn" onclick="nextQuestion()">Sonraki Soru ▶</button>
+    <button class="btn-close" onclick="closePanel('gamePanel')"> Kapat</button>
+  </div>
+</div>
+
+<!-- 3. HATIRLATICI -->
+<div id="reminderPanel" class="panel hidden">
+  <div class="panel-inner">
+    <div class="panel-handle"></div>
+    <h2 class="panel-title"> Hatırlatıcı Kartlar</h2>
+    <div class="completion-banner hidden" id="completionBanner"> Tüm görevler tamamlandı!</div>
+    <div class="tab-bar">
+      <button class="tab active" id="tabDaily"  onclick="switchTab('daily')"> Günlük</button>
+      <button class="tab"        id="tabWeekly" onclick="switchTab('weekly')"> Haftalık</button>
+    </div>
+    <div id="reminderList" class="reminder-list"></div>
+    <div class="reminder-footer">
+      <button class="btn-secondary small" onclick="resetReminders()"> Sıfırla</button>
+      <button class="btn-primary   small" onclick="doneAll()"> Hepsini Tamamla</button>
+    </div>
+    <button class="btn-close" onclick="closePanel('reminderPanel')"> Kapat</button>
+  </div>
+</div>
+
+<!-- 4. ACİL DURUM -->
+<div id="emergencyPanel" class="panel hidden">
+  <div class="panel-inner emergency-inner">
+    <div class="panel-handle"></div>
+    <h2 class="panel-title emergency-title"> Acil Durum Belirtileri</h2>
+    <div class="alert-box"> Bu belirtilerden birini yaşıyorsanız <strong>hemen doktorunuzu arayın!</strong></div>
+    <div id="emergencyList" class="emergency-list"></div>
+    <a class="btn-call pulse"       href="tel:112">�� 112'yi Ara</a>
+    <a class="btn-call btn-call-doc" href="tel:08502559999"> Nakil Merkezi Hattı</a>
+    <button class="btn-close" onclick="closePanel('emergencyPanel')"> Kapat</button>
+  </div>
+</div>
+
+<!-- 5. ILAC SAATLERİ -->
+<div id="drugPanel" class="panel hidden">
+  <div class="panel-inner">
+    <div class="panel-handle"></div>
+    <h2 class="panel-title"> İlaç Saatleri Takibi</h2>
+    <p class="drug-desc">İlaç adı ve saatinizi girin. En yakın ilaç saatiniz ana ekranda gösterilir.</p>
+    <div id="drugList" class="drug-list"></div>
+    <div class="drug-add-row">
+      <input type="text" id="drugNameInput" placeholder="İlaç adı (ör: Prograf)" class="drug-input"/>
+      <input type="time" id="drugTimeInput" class="drug-input" value="08:00"/>
+      <button class="btn-primary small" onclick="addDrug()">+ Ekle</button>
+    </div>
+    <button class="btn-close" onclick="closePanel('drugPanel')"> Kapat</button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast" class="toast hidden"></div>
+
+<!-- 6. AI YEMEK TANI -->
+<div id="aiPanel" class="panel hidden">
+  <div class="panel-inner">
+    <div class="panel-handle"></div>
+    <h2 class="panel-title">AI Kahvalti Analizi</h2>
+    <p class="drug-desc">Kahvaltiligini kameraya goster. Yapay zeka karaciger nakli hastalari icin uygun olup olmadigini analiz eder.</p>
+
+    <div class="ai-camera-wrap">
+      <video id="aiVideo" autoplay playsinline muted class="ai-video"></video>
+      <canvas id="aiCanvas" class="ai-canvas-hidden"></canvas>
+      <img id="aiSnapshot" class="ai-snapshot hidden" alt="Cekilen fotograf"/>
+      <div class="ai-overlay-label" id="aiOverlayLabel">Kamera hazir</div>
+    </div>
+
+    <div class="ai-btn-row">
+      <button class="btn-secondary" onclick="aiRetake()">Yeniden Cek</button>
+      <button class="btn-primary"   id="aiCaptureBtn" onclick="aiCapture()">Fotograf Cek</button>
+    </div>
+
+    <div id="aiResult" class="ai-result hidden">
+      <div class="ai-result-badge" id="aiResultBadge"></div>
+      <h3 id="aiResultFood" class="ai-result-food"></h3>
+      <p  id="aiResultReason" class="ai-result-reason"></p>
+      <div id="aiResultDetail" class="ai-result-detail"></div>
+    </div>
+
+    <div id="aiLoading" class="ai-loading hidden">
+      <div class="ai-spinner"></div>
+      <p>Yapay zeka analiz ediyor...</p>
+    </div>
+
+    <button class="btn-close" onclick="closePanel('aiPanel')">Kapat</button>
+  </div>
+</div>
+
+<script src="script.js"></script>
+<script>
+  if('serviceWorker' in navigator){
+    navigator.serviceWorker.register('/sw.js');
+  }
+</script>
+</body>
+</html>
