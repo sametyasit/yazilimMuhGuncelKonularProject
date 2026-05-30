@@ -71,8 +71,8 @@
 
 <a-scene
   embedded
-  arjs="sourceType:webcam; debugUIEnabled:false;"
-  renderer="logarithmicDepthBuffer:true; antialias:true;"
+  arjs="sourceType:webcam; debugUIEnabled:false; trackingMethod:best;"
+  renderer="antialias:true; alpha:true;"
   vr-mode-ui="enabled:false"
   style="position:fixed;top:0;left:0;width:100%;height:100%;z-index:1;">
 
@@ -81,14 +81,14 @@
     <a-plane id="bg" position="0 0.01 0" rotation="-90 0 0" width="3.4" height="2.2" color="#0a0a14" opacity="0.95" material="side:double"></a-plane>
     <a-plane id="hdr" position="0 0.02 0.75" rotation="-90 0 0" width="3.4" height="0.55" color="#6c63ff" opacity="1" material="side:double"></a-plane>
 
-    <a-text id="t-title" value="ILAC KULLANIMI" position="0 0.04 0.75" rotation="-90 0 0" align="center" color="#ffffff" width="3.2" font="roboto"></a-text>
-    <a-text id="t-l1" value="Immunsupresif ilaclarinizi her gun" position="0 0.04 0.28" rotation="-90 0 0" align="center" color="#e2e8f0" width="3" font="roboto"></a-text>
-    <a-text id="t-l2" value="AYNI SAATTE ve AKSATMADAN alin." position="0 0.04 0.02" rotation="-90 0 0" align="center" color="#fbbf24" width="3" font="roboto"></a-text>
-    <a-text id="t-l3" value="Takrolimus, Siklosporin, Mikofenolat:" position="0 0.04 -0.26" rotation="-90 0 0" align="center" color="#94a3b8" width="3" font="roboto"></a-text>
-    <a-text id="t-l4" value="Atlanan doz organ reddine yol acar!" position="0 0.04 -0.52" rotation="-90 0 0" align="center" color="#a78bfa" width="3" font="roboto"></a-text>
+    <a-text id="t-title" value="ILAC KULLANIMI" position="0 0.1 0.75" rotation="-90 0 0" align="center" color="#ffffff" width="3.2" font="roboto"></a-text>
+    <a-text id="t-l1" value="Immunsupresif ilaclarinizi her gun" position="0 0.1 0.28" rotation="-90 0 0" align="center" color="#e2e8f0" width="3" font="roboto"></a-text>
+    <a-text id="t-l2" value="AYNI SAATTE ve AKSATMADAN alin." position="0 0.1 0.02" rotation="-90 0 0" align="center" color="#fbbf24" width="3" font="roboto"></a-text>
+    <a-text id="t-l3" value="Takrolimus, Siklosporin, Mikofenolat:" position="0 0.1 -0.26" rotation="-90 0 0" align="center" color="#94a3b8" width="3" font="roboto"></a-text>
+    <a-text id="t-l4" value="Atlanan doz organ reddine yol acar!" position="0 0.1 -0.52" rotation="-90 0 0" align="center" color="#a78bfa" width="3" font="roboto"></a-text>
 
     <a-plane id="status-box" position="0 0.02 -0.87" rotation="-90 0 0" width="2.8" height="0.38" color="#ef4444" opacity="0.9" material="side:double"></a-plane>
-    <a-text id="t-status" value="ONEM DERECESI: KRITIK" position="0 0.04 -0.87" rotation="-90 0 0" align="center" color="#ffffff" width="2.6" font="roboto"></a-text>
+    <a-text id="t-status" value="ONEM DERECESI: KRITIK" position="0 0.1 -0.87" rotation="-90 0 0" align="center" color="#ffffff" width="2.6" font="roboto"></a-text>
 
     <a-plane position="0 0 0.5" rotation="-90 0 0" width="3.6" height="2.4" color="#6c63ff" opacity="0.06" material="side:double">
       <a-animation attribute="opacity" from="0.02" to="0.16" dur="1300" repeat="indefinite" direction="alternate"></a-animation>
