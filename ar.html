@@ -2,116 +2,68 @@
 <html lang="tr">
 <head>
   <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>LiveCare AR - Karaciger Nakli</title>
+  <script src="https://aframe.io/releases/1.3.0/aframe.min.js"></script>
+  <script src="https://raw.githack.com/AR-js-org/AR.js/3.4.5/aframe/build/aframe-ar.js"></script>
   <style>
     *{margin:0;padding:0;box-sizing:border-box;}
-    body{overflow:hidden;font-family:'Segoe UI',Arial,sans-serif;background:#000;height:100dvh;width:100vw;}
-
-    /* Kamera arka plan */
-    #video{position:fixed;top:0;left:0;width:100%;height:100%;object-fit:cover;z-index:0;}
-
-    /* Üst bar */
-    #top-bar{position:fixed;top:0;left:0;width:100%;z-index:99;background:rgba(5,5,20,0.82);backdrop-filter:blur(14px);padding:13px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(108,99,255,0.4);}
+    body{overflow:hidden;font-family:'Segoe UI',sans-serif;background:#000;}
+    #top-bar{position:fixed;top:0;left:0;width:100%;z-index:999;background:rgba(5,5,20,0.85);backdrop-filter:blur(12px);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(108,99,255,0.4);}
     .top-title{color:#fff;font-size:15px;font-weight:800;}
     .top-sub{color:#a78bfa;font-size:11px;margin-top:2px;}
-    #back-btn{background:rgba(108,99,255,0.28);border:1.5px solid #6c63ff;color:#c4b5fd;padding:8px 16px;border-radius:99px;font-size:13px;font-weight:700;cursor:pointer;text-decoration:none;}
-
-    /* Kart — orta ekranda yüzer */
-    #ar-card{
-      position:fixed;
-      top:50%;left:50%;
-      transform:translate(-50%,-50%);
-      z-index:10;
-      width:min(94vw,440px);
-      border-radius:20px;
-      overflow:hidden;
-      box-shadow:0 8px 48px rgba(0,0,0,0.7), 0 0 0 2px var(--hc,#6c63ff);
-      backdrop-filter:blur(2px);
-      animation:floatIn .35s cubic-bezier(.22,1,.36,1);
-    }
-    @keyframes floatIn{from{opacity:0;transform:translate(-50%,-46%)}to{opacity:1;transform:translate(-50%,-50%)}}
-
-    /* Header */
-    #card-header{
-      background:var(--hc,#6c63ff);
-      padding:18px 20px 16px;
-      position:relative;
-    }
-    #card-header::before{content:'';position:absolute;left:0;top:0;bottom:0;width:10px;background:rgba(255,255,255,0.22);}
-    #card-icon{font-size:28px;margin-bottom:4px;}
-    #card-title{color:#fff;font-size:22px;font-weight:900;letter-spacing:.5px;line-height:1.1;}
-
-    /* İçerik */
-    #card-body{background:rgba(7,7,26,0.97);padding:4px 0 0;}
-
-    .card-line{
-      display:flex;align-items:center;gap:12px;
-      padding:13px 18px;
-      border-bottom:1px solid rgba(255,255,255,0.05);
-    }
-    .card-line:last-child{border-bottom:none;}
-    .line-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
-    .line-text{font-size:15px;font-weight:500;line-height:1.35;}
-
-    /* Status banner */
-    #card-status{
-      background:var(--sc,#ef4444);
-      padding:12px 18px;
-      display:flex;align-items:center;gap:10px;
-    }
-    #card-status::before{content:'';width:10px;height:100%;position:absolute;left:0;background:rgba(255,255,255,0.2);}
-    #status-text{color:#fff;font-size:14px;font-weight:800;letter-spacing:.4px;}
-
-    /* Alt buton barı */
-    #card-bar{
-      position:fixed;bottom:0;left:0;width:100%;z-index:99;
-      background:rgba(5,5,20,0.92);backdrop-filter:blur(14px);
-      border-top:1px solid rgba(108,99,255,0.28);
-      padding:10px 12px 26px;
-    }
+    #back-btn{background:rgba(108,99,255,0.25);border:1.5px solid #6c63ff;color:#c4b5fd;padding:7px 15px;border-radius:99px;font-size:13px;font-weight:700;cursor:pointer;text-decoration:none;}
+    #card-bar{position:fixed;bottom:0;left:0;width:100%;z-index:999;background:rgba(5,5,20,0.92);backdrop-filter:blur(12px);border-top:1px solid rgba(108,99,255,0.3);padding:10px 12px 24px;}
     #card-bar-title{color:#475569;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1.2px;text-align:center;margin-bottom:8px;}
     #card-btns{display:flex;gap:7px;overflow-x:auto;padding-bottom:2px;}
     #card-btns::-webkit-scrollbar{display:none;}
-    .cbt{flex-shrink:0;padding:8px 14px;border-radius:99px;border:1.5px solid rgba(108,99,255,0.3);background:rgba(108,99,255,0.07);color:#94a3b8;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;transition:all .18s;}
+    .cbt{flex-shrink:0;padding:7px 13px;border-radius:99px;border:1.5px solid rgba(108,99,255,0.3);background:rgba(108,99,255,0.07);color:#94a3b8;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;transition:all .18s;}
     .cbt.active{background:#6c63ff;border-color:#6c63ff;color:#fff;box-shadow:0 2px 12px rgba(108,99,255,0.4);}
 
-    /* Kamera izin ekranı */
-    #cam-prompt{position:fixed;inset:0;z-index:200;background:rgba(5,5,20,0.97);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:32px;}
-    #cam-prompt h2{color:#fff;font-size:20px;font-weight:800;text-align:center;}
-    #cam-prompt p{color:#94a3b8;font-size:14px;text-align:center;line-height:1.5;}
-    #cam-btn{background:linear-gradient(135deg,#6c63ff,#a78bfa);color:#fff;border:none;padding:14px 32px;border-radius:99px;font-size:16px;font-weight:800;cursor:pointer;box-shadow:0 4px 20px rgba(108,99,255,0.4);}
+    /* Crosshair */
+    #crosshair{position:fixed;top:50%;left:50%;transform:translate(-50%,-60%);z-index:10;pointer-events:none;opacity:0.5;}
+
+    /* Marker bulundu rozeti */
+    #found-badge{position:fixed;top:75px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#22c55e,#16a34a);color:#fff;padding:8px 22px;border-radius:99px;font-size:13px;font-weight:800;z-index:1000;display:none;box-shadow:0 4px 20px rgba(34,197,94,0.4);}
+    #hint-text{position:fixed;top:75px;left:50%;transform:translateX(-50%);background:rgba(5,5,20,0.78);color:#94a3b8;padding:7px 18px;border-radius:99px;font-size:12px;font-weight:600;z-index:10;white-space:nowrap;border:1px solid rgba(255,255,255,0.1);}
+
+    /* Marker referans görseli */
+    #marker-ref{position:fixed;bottom:138px;right:12px;z-index:999;background:rgba(5,5,20,0.88);border:1px solid rgba(108,99,255,0.4);border-radius:14px;padding:8px;text-align:center;}
+    #marker-ref p{color:#64748b;font-size:9px;margin-bottom:4px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;}
+    #marker-ref img{width:72px;height:72px;border-radius:8px;}
   </style>
 </head>
 <body>
 
-<video id="video" autoplay playsinline muted></video>
-
 <div id="top-bar">
   <div>
     <div class="top-title">Karaciger Nakli AR</div>
-    <div class="top-sub">Kamera uzerinde bilgi karti</div>
+    <div class="top-sub">Hiro marker'a kamerayi tut</div>
   </div>
   <a href="index.html" id="back-btn">Ana Ekran</a>
 </div>
 
-<!-- AR Bilgi Kartı -->
-<div id="ar-card">
-  <div id="card-header">
-    <div id="card-icon"></div>
-    <div id="card-title">ILAC KULLANIMI</div>
-  </div>
-  <div id="card-body">
-    <!-- JS ile doldurulacak -->
-  </div>
-  <div id="card-status" style="position:relative;">
-    <span id="status-text">ONEM DERECESI: KRITIK</span>
-  </div>
+<div id="found-badge">Marker Algilandi!</div>
+<div id="hint-text">Markeri kamera cercevesine al</div>
+
+<svg id="crosshair" width="160" height="160" viewBox="0 0 160 160">
+  <rect x="8" y="8" width="44" height="5" rx="2.5" fill="#6c63ff"/>
+  <rect x="8" y="8" width="5" height="44" rx="2.5" fill="#6c63ff"/>
+  <rect x="108" y="8" width="44" height="5" rx="2.5" fill="#6c63ff"/>
+  <rect x="147" y="8" width="5" height="44" rx="2.5" fill="#6c63ff"/>
+  <rect x="8" y="147" width="44" height="5" rx="2.5" fill="#6c63ff"/>
+  <rect x="8" y="108" width="5" height="44" rx="2.5" fill="#6c63ff"/>
+  <rect x="108" y="147" width="44" height="5" rx="2.5" fill="#6c63ff"/>
+  <rect x="147" y="108" width="5" height="44" rx="2.5" fill="#6c63ff"/>
+</svg>
+
+<div id="marker-ref">
+  <p>Bu markeri yazdir</p>
+  <img src="https://ar-js-org.github.io/AR.js/data/images/hiro.png" alt="Hiro Marker"/>
 </div>
 
-<!-- Alt buton barı -->
 <div id="card-bar">
-  <div id="card-bar-title">Gosterilecek karti sec</div>
+  <div id="card-bar-title">Gosterilecek AR Karti Sec</div>
   <div id="card-btns">
     <button class="cbt active" onclick="setCard(0)">Ilac Kullanimi</button>
     <button class="cbt"        onclick="setCard(1)">Beslenme</button>
@@ -122,46 +74,72 @@
   </div>
 </div>
 
-<!-- Kamera izin ekranı -->
-<div id="cam-prompt">
-  <h2>Kamera Erisimi</h2>
-  <p>AR deneyimi icin kameranizi kullanmamiza izin verin. Hicbir veri kaydedilmez.</p>
-  <button id="cam-btn" onclick="startCamera()">Kamerayi Ac</button>
-</div>
+<a-scene
+  embedded
+  arjs="sourceType:webcam; debugUIEnabled:false; trackingMethod:best; detectionMode:mono_and_matrix; matrixCodeType:3x3;"
+  renderer="antialias:true; alpha:true; logarithmicDepthBuffer:false;"
+  vr-mode-ui="enabled:false"
+  style="position:fixed;top:0;left:0;width:100%;height:100%;z-index:1;">
+
+  <a-assets>
+    <canvas id="arCanvas" width="1024" height="680"></canvas>
+  </a-assets>
+
+  <a-marker preset="hiro" id="hiroMarker" raycaster="objects:.clickable" emitevents="true" cursor="fuse:false;rayOrigin:mouse">
+    <!-- Hafif yukseltilmis platform -->
+    <a-plane position="0 0.002 0" rotation="-90 0 0"
+      width="4.2" height="2.8"
+      color="#07071a" opacity="0.97"
+      material="side:double">
+    </a-plane>
+    <!-- Renkli kenar cerceve -->
+    <a-plane id="borderPlane" position="0 0.004 0" rotation="-90 0 0"
+      width="4.2" height="2.8"
+      color="#6c63ff" opacity="0"
+      material="side:double; transparent:true;">
+    </a-plane>
+    <!-- Kart texture (canvas ile ciziyor) -->
+    <a-plane id="cardPlane"
+      position="0 0.01 0"
+      rotation="-90 0 0"
+      width="4.0" height="2.68"
+      material="src:#arCanvas; transparent:true; side:double; npot:true;">
+    </a-plane>
+  </a-marker>
+
+  <a-entity camera></a-entity>
+</a-scene>
 
 <script>
 const cards = [
   {
     title: 'ILAC KULLANIMI',
-    icon: '',
     hc: '#6c63ff', sc: '#ef4444',
     lines: [
-      {text: 'Immunsupresif ilaclarinizi her gun', color: '#e2e8f0'},
-      {text: 'AYNI SAATTE ve AKSATMADAN alin.', color: '#fbbf24'},
+      {text: 'Immunsupresif ilaclarinizi her gun alin', color: '#e2e8f0'},
+      {text: 'AYNI SAATTE ve AKSATMADAN kullanin!', color: '#fbbf24'},
       {text: 'Takrolimus - Siklosporin - Mikofenolat', color: '#a78bfa'},
-      {text: 'Atlanan doz organ reddine yol acar!', color: '#f87171'},
+      {text: 'Atlanan tek doz organ reddine yol acar!', color: '#f87171'},
     ],
     status: 'ONEM DERECESI: KRITIK',
   },
   {
     title: 'BESLENME KURALLARI',
-    icon: '',
     hc: '#d97706', sc: '#b45309',
     lines: [
-      {text: 'Sebze, meyve, tam tahil, az yagly protein.', color: '#e2e8f0'},
+      {text: 'Sebze, meyve, tam tahil, az yagly protein', color: '#e2e8f0'},
       {text: 'GREYFURT KESINLIKLE YASAK!', color: '#f87171'},
-      {text: 'Alkol ve cig et kesinlikle tuketme.', color: '#fbbf24'},
-      {text: 'Pastorize edilmemis sut urunleri yasak.', color: '#94a3b8'},
+      {text: 'Alkol ve cig et kesinlikle tuketme', color: '#fbbf24'},
+      {text: 'Pastorize edilmemis sut urunleri yasak', color: '#94a3b8'},
     ],
     status: 'SAGLIKLI BESLENME ZORUNLU',
   },
   {
     title: 'RED BELIRTILERI',
-    icon: '',
     hc: '#dc2626', sc: '#b91c1c',
     lines: [
-      {text: 'Ates 38C+, sararma, karin agrisi,', color: '#fca5a5'},
-      {text: 'siddetli yorgunluk, idrar kararması.', color: '#f87171'},
+      {text: 'Ates 38C+, sararma, karin agrisi', color: '#fca5a5'},
+      {text: 'Siddetli yorgunluk, idrar kararması', color: '#f87171'},
       {text: 'Bu belirtiler organ reddinin isareti!', color: '#fbbf24'},
       {text: 'HEMEN doktorunuzu arayin!', color: '#ff6b6b'},
     ],
@@ -169,90 +147,200 @@ const cards = [
   },
   {
     title: 'KACINILACAKLAR',
-    icon: '',
     hc: '#7f1d1d', sc: '#991b1b',
     lines: [
-      {text: 'ALKOL: Nakledilen karacigeri tahrip eder.', color: '#f87171'},
-      {text: 'SIGARA: Bagisiklik sistemini cokertir.', color: '#fbbf24'},
-      {text: 'GREYFURT ve cig et kesinlikle yasak.', color: '#fca5a5'},
-      {text: 'Izinsiz bitki cayi ve takviye alma.', color: '#94a3b8'},
+      {text: 'ALKOL: Nakledilen karacigeri tahrip eder', color: '#f87171'},
+      {text: 'SIGARA: Bagisiklik sistemini cokertir', color: '#fbbf24'},
+      {text: 'GREYFURT ve cig et kesinlikle yasak', color: '#fca5a5'},
+      {text: 'Izinsiz bitki cayi ve takviye alma!', color: '#94a3b8'},
     ],
     status: 'BU KURALLARI ASLA IHLAL ETME',
   },
   {
     title: 'EGZERSIZ VE YASAM',
-    icon: '',
     hc: '#047857', sc: '#059669',
     lines: [
-      {text: 'Doktor onayli hafif yuruyus yap.', color: '#e2e8f0'},
-      {text: 'Gunluk 20-30 dk yuruyus idealdir.', color: '#6ee7b7'},
-      {text: 'Agir kaldirma ve yorucu spordan kacin.', color: '#94a3b8'},
-      {text: 'Duzensiz uyku bagisiklik sistemini zorlar.', color: '#fbbf24'},
+      {text: 'Doktor onayli hafif yuruyus yapabilirsin', color: '#e2e8f0'},
+      {text: 'Gunluk 20-30 dk yuruyus idealdir', color: '#6ee7b7'},
+      {text: 'Agir kaldirma ve yorucu spordan kacin', color: '#94a3b8'},
+      {text: 'Duzensiz uyku bagisiklik sistemini zorlar', color: '#fbbf24'},
     ],
     status: 'AKTIF VE DUZENLI YAS',
   },
   {
     title: 'ACIL DURUMLAR',
-    icon: '',
     hc: '#7f1d1d', sc: '#ef4444',
     lines: [
       {text: '38C+ ates / ani sararma / nefes darligi', color: '#f87171'},
       {text: '=> HEMEN 112 veya nakil merkezini ara!', color: '#fbbf24'},
-      {text: 'Ameliyat bolgesinde sislik, kirmizilik,', color: '#fca5a5'},
-      {text: 'Ani kilo artisi 2kg+/2gun tehlike isareti.', color: '#e2e8f0'},
+      {text: 'Ameliyat bolgesinde sislik, kirmizilik', color: '#fca5a5'},
+      {text: 'Ani kilo artisi 2kg+/2gun tehlike isareti', color: '#e2e8f0'},
     ],
     status: 'ACIL: 112  |  0850 255 9999',
   },
 ];
 
-function setCard(idx) {
-  document.querySelectorAll('.cbt').forEach((b,i)=>b.classList.toggle('active',i===idx));
-  const c = cards[idx];
+const W = 1024, H = 680;
+const canvas = document.getElementById('arCanvas');
+const ctx = canvas.getContext('2d');
 
-  // CSS değişkenlerini güncelle
-  document.getElementById('ar-card').style.setProperty('--hc', c.hc);
-  document.getElementById('ar-card').style.setProperty('--sc', c.sc);
-  document.getElementById('card-header').style.background = c.hc;
-  document.getElementById('card-status').style.background = c.sc;
-
-  document.getElementById('card-icon').textContent  = c.icon;
-  document.getElementById('card-title').textContent = c.title;
-  document.getElementById('status-text').textContent = c.status;
-
-  // Satırları oluştur
-  const body = document.getElementById('card-body');
-  body.innerHTML = c.lines.map(l => `
-    <div class="card-line">
-      <div class="line-dot" style="background:${l.color};box-shadow:0 0 6px ${l.color}88;"></div>
-      <div class="line-text" style="color:${l.color};">${l.text}</div>
-    </div>
-  `).join('');
-
-  // Animasyon tekrarla
-  const card = document.getElementById('ar-card');
-  card.style.animation = 'none';
-  card.offsetHeight;
-  card.style.animation = 'floatIn .3s cubic-bezier(.22,1,.36,1)';
+function roundRect(c, x, y, w, h, r) {
+  c.beginPath();
+  c.moveTo(x+r,y); c.lineTo(x+w-r,y);
+  c.quadraticCurveTo(x+w,y,x+w,y+r);
+  c.lineTo(x+w,y+h-r); c.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+  c.lineTo(x+r,y+h); c.quadraticCurveTo(x,y+h,x,y+h-r);
+  c.lineTo(x,y+r); c.quadraticCurveTo(x,y,x+r,y);
+  c.closePath();
 }
 
-// Kamera aç
-async function startCamera() {
-  try {
-    const stream = await navigator.mediaDevices.getUserMedia({
-      video: { facingMode: 'environment', width:{ideal:1280}, height:{ideal:720} },
-      audio: false
-    });
-    document.getElementById('video').srcObject = stream;
-    document.getElementById('cam-prompt').style.display = 'none';
-  } catch(e) {
-    // Kamera yoksa sadece prompt'u kapat, koyu arka planla devam et
-    document.getElementById('cam-prompt').style.display = 'none';
-    document.body.style.background = '#07071a';
+function drawCard(card) {
+  ctx.clearRect(0, 0, W, H);
+
+  // Arka plan
+  roundRect(ctx, 0, 0, W, H, 26);
+  ctx.fillStyle = '#07071a';
+  ctx.fill();
+
+  // Renkli dis cerceve
+  roundRect(ctx, 3, 3, W-6, H-6, 24);
+  ctx.strokeStyle = card.hc;
+  ctx.lineWidth = 6;
+  ctx.globalAlpha = 0.9;
+  ctx.stroke();
+  ctx.globalAlpha = 1;
+
+  // Header gradient
+  const hg = ctx.createLinearGradient(0, 0, W, 0);
+  hg.addColorStop(0, card.hc);
+  hg.addColorStop(1, card.hc + 'cc');
+  roundRect(ctx, 0, 0, W, 136, 26);
+  ctx.fillStyle = hg;
+  ctx.fill();
+  ctx.fillRect(0, 106, W, 30); // alt koseler duzelt
+
+  // Header sol beyaz serit
+  ctx.fillStyle = 'rgba(255,255,255,0.25)';
+  ctx.fillRect(0, 0, 13, 136);
+
+  // Baslik metni - golgeli
+  ctx.shadowColor = 'rgba(0,0,0,0.5)';
+  ctx.shadowBlur = 8;
+  ctx.fillStyle = '#ffffff';
+  ctx.font = 'bold 60px Arial, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(card.title, W/2, 70);
+  ctx.shadowBlur = 0;
+
+  // Ayrac cizgi
+  ctx.strokeStyle = 'rgba(255,255,255,0.18)';
+  ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(28,144); ctx.lineTo(W-28,144); ctx.stroke();
+
+  // Satirlar
+  const lineH = 104;
+  const startY = 156;
+
+  card.lines.forEach((line, i) => {
+    const y = startY + i * lineH;
+
+    // Satir arka plani
+    roundRect(ctx, 16, y+2, W-32, lineH-10, 10);
+    ctx.fillStyle = i%2===0 ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.2)';
+    ctx.fill();
+
+    // Sol renk cubugu (parlak)
+    const grad = ctx.createLinearGradient(16, 0, 30, 0);
+    grad.addColorStop(0, line.color);
+    grad.addColorStop(1, line.color + '44');
+    ctx.fillStyle = grad;
+    ctx.fillRect(16, y+2, 8, lineH-10);
+
+    // Metin
+    ctx.fillStyle = line.color;
+    ctx.font = '500 40px Arial, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(line.text, W/2 + 5, y + (lineH-10)/2 + 2);
+  });
+
+  // Status banner
+  const sbY = H - 86;
+  const sg = ctx.createLinearGradient(0, sbY, W, sbY);
+  sg.addColorStop(0, card.sc);
+  sg.addColorStop(1, card.sc + 'dd');
+  ctx.fillStyle = sg;
+  ctx.fillRect(0, sbY, W, 86);
+
+  // Status ust cizgi
+  ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+  ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(0, sbY); ctx.lineTo(W, sbY); ctx.stroke();
+
+  // Status sol serit
+  ctx.fillStyle = 'rgba(255,255,255,0.22)';
+  ctx.fillRect(0, sbY, 13, 86);
+
+  // Status metni
+  ctx.shadowColor = 'rgba(0,0,0,0.4)';
+  ctx.shadowBlur = 6;
+  ctx.fillStyle = '#ffffff';
+  ctx.font = 'bold 42px Arial, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(card.status, W/2, sbY + 43);
+  ctx.shadowBlur = 0;
+
+  // Texture guncelle
+  const plane = document.getElementById('cardPlane');
+  if (plane) {
+    const mesh = plane.getObject3D('mesh');
+    if (mesh && mesh.material && mesh.material.map) {
+      mesh.material.map.needsUpdate = true;
+    }
   }
 }
 
-// Başlangıçta ilk kartı yükle
-setCard(0);
+let currentIdx = 0;
+function setCard(idx) {
+  currentIdx = idx;
+  document.querySelectorAll('.cbt').forEach((b,i) => b.classList.toggle('active', i===idx));
+  drawCard(cards[idx]);
+  // Kenar rengini de guncelle
+  const bp = document.getElementById('borderPlane');
+  if(bp) bp.setAttribute('color', cards[idx].hc);
+}
+
+// Sahne yuklenince ciz + texture periyodik guncelle
+document.querySelector('a-scene').addEventListener('loaded', () => {
+  drawCard(cards[0]);
+  setInterval(() => {
+    const plane = document.getElementById('cardPlane');
+    if (plane) {
+      const mesh = plane.getObject3D('mesh');
+      if (mesh && mesh.material && mesh.material.map) {
+        mesh.material.map.needsUpdate = true;
+      }
+    }
+  }, 150);
+});
+
+// Marker olaylari
+const marker = document.getElementById('hiroMarker');
+const badge  = document.getElementById('found-badge');
+const hint   = document.getElementById('hint-text');
+
+marker.addEventListener('markerFound', () => {
+  badge.style.display = 'block';
+  hint.style.display  = 'none';
+  if(navigator.vibrate) navigator.vibrate([60,30,60]);
+  setTimeout(() => { badge.style.display = 'none'; }, 2500);
+  drawCard(cards[currentIdx]);
+});
+marker.addEventListener('markerLost', () => {
+  hint.style.display = 'block';
+});
 </script>
 </body>
 </html>
