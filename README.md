@@ -2,6 +2,14 @@ Samet Yasıt 225542017
 Zeki Erdem Sincer 225541005
 Ahmet Hakan Pusa  225541023
 Burak Dansık  225542001
+
+https://karaciger-nakli-ar.vercel.app/
+
+
+video link 1 : https://youtu.be/B5UAdUyXDmo?si=QNT_g-Vt-FAyIujB
+
+video link 2 : https://youtu.be/aDhP7iXU7T0?si=jsPbQ5ONL8F5WKbX
+
 # 🫀 LiveCare AR
 ## Karaciğer Nakli Sonrası Hasta Eğitim ve Destek Uygulaması
 
