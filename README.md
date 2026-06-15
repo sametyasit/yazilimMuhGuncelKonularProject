@@ -1,3 +1,7 @@
+Samet Yasıt 225542017
+Zeki Erdem Sincer 225541005
+Ahmet Hakan Pusa  225541023
+Burak Dansık  225542001
 # 🫀 LiveCare AR
 ## Karaciğer Nakli Sonrası Hasta Eğitim ve Destek Uygulaması
 
